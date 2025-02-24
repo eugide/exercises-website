@@ -1,76 +1,105 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
-function Register() {
+const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
   });
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
     setFormData({
       ...formData,
       [name]: value,
     });
-
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      console.log(formData);
-    };
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:3000/user/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      await response.json();
+      navigate("/login");
+    } catch (error) {
+      console.error("Error registering: ", error.message);
+    } finally {
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+      });
+    }
+  };
+
   return (
-    <div className="my-10">
-      <form onSubmit={handleInputChange} className="w-1/2
-          bg-gray-300 mx-auto rounded-sm p-4 shadow-sm flex flex-col gap-y-3">
+    <div className="mt-20">
+      <form
+        onSubmit={handleSubmit}
+        className="w-1/2 p-4 mx-auto bg-gray-300 rounded-sm shadow-sm flex flex-col gap-y-3"
+      >
         <h1 className="text-xl font-semibold">Register</h1>
         <label className="flex flex-col">
           <span>First Name</span>
-          <input className="border border-blue-800 rounded-md px-3 py-1.5 outline-none"
+          <input
             type="text"
             name="firstName"
             value={formData.firstName}
             onChange={handleInputChange}
-            placeholder="Enter your First name"
+            placeholder="Enter your first name"
+            className="border border-blue-800 rounded-sm px-3 py-1.5 outline-none"
           />
         </label>
         <label className="flex flex-col">
           <span>Last Name</span>
-          <input className="border border-blue-800 rounded-md px-3 py-1.5 outline-none"
+          <input
             type="text"
             name="lastName"
             value={formData.lastName}
             onChange={handleInputChange}
-            placeholder="Enter your Last name"
+            placeholder="Enter your last name"
+            className="border border-blue-800 rounded-sm px-3 py-1.5 outline-none"
           />
         </label>
-
         <label className="flex flex-col">
           <span>Email</span>
-          <input className="border border-blue-800 rounded-md px-3 py-1.5 outline-none"
-            type="text"
+          <input
+            type="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
             placeholder="Enter your email"
+            className="border border-blue-800 rounded-sm px-3 py-1.5 outline-none"
           />
         </label>
-
         <label className="flex flex-col">
           <span>Password</span>
-          <input className="border border-blue-800 rounded-md px-3 py-1.5 outline-none"
+          <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleInputChange}
             placeholder="Enter your password"
+            className="border border-blue-800 rounded-sm px-3 py-1.5 outline-none"
           />
         </label>
-        <button className="font-bold px-6 py-2 border border-blue-800 
-        text-white bg-blue-800 hover:bg-white hover:text-blue-800 rounded-sm">REGISTER</button>
+        <button className="px-6 py-2 bg-blue-800 text-white hover:border hover:border-blue-800 hover:bg-white rounded-sm  hover:text-blue-800">
+          Register
+        </button>
       </form>
     </div>
   );
-}
+};
 
 export default Register;
